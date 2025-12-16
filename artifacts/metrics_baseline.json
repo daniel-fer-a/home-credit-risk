@@ -1,0 +1,7 @@
+{
+  "model": "logistic_regression_baseline",
+  "roc_auc_valid": 0.7619848123446873,
+  "class_weight": "balanced",
+  "n_numeric_features": 155,
+  "n_categorical_features": 16
+}
