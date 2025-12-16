@@ -1,0 +1,3 @@
+model,roc_auc_valid
+Baseline (Logistic),0.7619848123446873
+Champion (HGB),0.768341982926699
