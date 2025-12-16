@@ -1,0 +1,8 @@
+{
+  "rows":307511,
+  "n_features":121,
+  "id_columns":[
+    "SK_ID_CURR"
+  ],
+  "has_target":true
+}
