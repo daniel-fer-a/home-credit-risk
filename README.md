@@ -1,4 +1,4 @@
-# Home Credit Default Risk — Machine Learning Project
+# Home Credit Default Risk — Machine Learning 
 
 ## 1. Descripción general
 Este proyecto aborda un problema de **clasificación binaria** orientado a la predicción de **incumplimiento crediticio (default)** utilizando el dataset *Home Credit Default Risk*.  
