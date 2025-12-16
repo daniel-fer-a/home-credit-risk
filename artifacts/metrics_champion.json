@@ -1,0 +1,9 @@
+{
+  "model": "hist_gradient_boosting_numeric_only",
+  "roc_auc_valid": 0.768341982926699,
+  "class_weight": {
+    "0": 1.0,
+    "1": 5.0
+  },
+  "n_features": 155
+}
