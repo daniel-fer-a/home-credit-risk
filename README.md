@@ -1,114 +1,183 @@
-# Home Credit Default Risk — Machine Learning 
+Home Credit Default Risk — Machine Learning
 
-## 1. Descripción general
-Este proyecto aborda un problema de **clasificación binaria** orientado a la predicción de **incumplimiento crediticio (default)** utilizando el dataset *Home Credit Default Risk*.  
-El objetivo es construir un pipeline completo de Machine Learning siguiendo la metodología **CRISP-DM**, integrando múltiples fuentes de datos y evaluando distintos modelos predictivos.
+1. Descripción general
 
----
+Este proyecto aborda un problema de clasificación binaria orientado a la predicción de incumplimiento crediticio (default) utilizando el dataset Home Credit Default Risk.
+El objetivo es construir una solución completa de Machine Learning, desde el análisis de datos hasta el despliegue del modelo, siguiendo la metodología CRISP-DM.
 
-## 2. Dataset
+El proyecto integra múltiples fuentes de información histórica, aplica ingeniería de características, compara modelos predictivos y expone el modelo final mediante una API REST.
+
+2. Dataset
+
 Se utilizan las siguientes tablas proporcionadas por Home Credit:
 
-- application  
-- bureau  
-- bureau_balance  
-- previous_application  
-- POS_CASH_balance  
-- installments_payments  
-- credit_card_balance  
+application
 
-Las tablas secundarias fueron agregadas y consolidadas por cliente (`SK_ID_CURR`) para evitar explosión de filas.
+bureau
 
-**Dimensión final del dataset de modelado:**
-- Registros: **307.511**
-- Variables totales: **171**
-- Variables creadas mediante feature engineering: **50**
+bureau_balance
 
----
+previous_application
 
-## 3. Metodología (CRISP-DM)
+POS_CASH_balance
 
-### 3.1 Data Understanding
-- Análisis de granularidad y claves entre tablas
-- Validación de relaciones (uno-a-muchos)
-- Identificación de variables numéricas y categóricas
-- Exploración de valores nulos y distribución del target
+installments_payments
 
-### 3.2 Data Preparation
-- Agregaciones jerárquicas (mensual → crédito → cliente)
-- Manejo explícito de valores infinitos generados por divisiones
-- Consolidación de features en una única tabla de modelado
-- Split estratificado en conjuntos de entrenamiento, validación y test
+credit_card_balance
 
-### 3.3 Modeling
-- **Modelo baseline:** Regresión Logística con preprocesamiento e imputación
-- **Modelo campeón:** Histogram Gradient Boosting usando variables numéricas
-- Manejo del desbalance mediante ponderación de clases
+Las tablas secundarias fueron agregadas y consolidadas por cliente (SK_ID_CURR) para evitar la explosión de filas y construir una vista única por observación.
 
-### 3.4 Evaluation
-- Métrica principal: **ROC-AUC**
-- Comparación entre baseline y modelo campeón
-- Evaluación final realizada exclusivamente sobre el conjunto de test
+Dimensión final del dataset de modelado:
 
----
+Registros: 307.511
 
-## 4. Resultados
+Variables totales: 171
 
-### Baseline (Regresión Logística)
-- ROC-AUC en validación: ~ **0.76**
-- Alto recall para la clase positiva (default), con baja precisión debido al desbalance
+Variables creadas mediante feature engineering: 50
 
-### Modelo campeón (Histogram Gradient Boosting)
-- ROC-AUC en validación: ~ **0.77**
-- ROC-AUC en test: **0.773**
-- Mejor equilibrio entre precisión y recall
-- Buen nivel de generalización (sin evidencia de overfitting)
+3. Metodología (CRISP-DM)
+3.1 Business & Data Understanding
 
----
+Comprensión del problema de riesgo crediticio
 
-## 5. Estructura del proyecto
+Análisis de granularidad y claves entre tablas
 
-home-credit-risk  
-├── 01_data_understanding  
-├── 02_data_preparation  
-├── 03_modeling  
-├── artifacts  
-├── data  
-│   ├── raw  
-│   └── processed  
-├── src  
-├── requirements.txt  
-└── README.md  
+Validación de relaciones uno-a-muchos
 
----
+Exploración del desbalance del target
 
-## 6. Reproducibilidad
+Identificación de variables numéricas y categóricas
 
-### Requisitos
-- Python 3.11 o superior
+3.2 Data Preparation
 
-### Instalación de dependencias
-Ejecutar el siguiente comando en la raíz del proyecto:
+Agregaciones jerárquicas (mensual → crédito → cliente)
+
+Generación de variables estadísticas (sumas, promedios, conteos)
+
+Manejo explícito de valores nulos e infinitos
+
+Consolidación de features en una única tabla de modelado
+
+Split estratificado en conjuntos de entrenamiento, validación y test
+
+3.3 Modeling
+
+Modelo baseline: Regresión Logística con imputación y escalado
+
+Modelo campeón: Histogram Gradient Boosting utilizando variables numéricas
+
+Manejo del desbalance mediante ponderación de clases (class_weight)
+
+3.4 Evaluation
+
+Métrica principal: ROC-AUC
+
+Comparación directa entre baseline y modelo campeón
+
+Evaluación final realizada exclusivamente sobre el conjunto de test
+
+Análisis de precisión, recall y capacidad discriminativa
+
+3.5 Deployment
+
+Persistencia del modelo campeón entrenado
+
+Exposición del modelo mediante una API REST desarrollada con FastAPI
+
+Endpoint de predicción con documentación automática vía Swagger
+
+4. Resultados
+Baseline — Regresión Logística
+
+ROC-AUC en validación: ~ 0.76
+
+Buen recall para la clase minoritaria (default)
+
+Precisión limitada debido al fuerte desbalance
+
+Modelo campeón — Histogram Gradient Boosting
+
+ROC-AUC en validación: ~ 0.77
+
+ROC-AUC en test: 0.773
+
+Mejor equilibrio entre precisión y recall
+
+Buen nivel de generalización, sin evidencia de overfitting
+
+5. Despliegue del modelo (API)
+
+El modelo campeón fue desplegado mediante una API REST utilizando FastAPI.
+
+Endpoints disponibles
+
+GET /health → Verificación del estado del servicio
+
+POST /predict → Predicción de probabilidad de default
+
+Ejecución de la API
+
+Desde la raíz del proyecto:
+
+uvicorn 05_deployment.app:app --host 127.0.0.1 --port 8000
+
+Documentación interactiva
+
+Una vez levantado el servicio, la documentación Swagger está disponible en:
+
+http://127.0.0.1:8000/docs
+
+6. Estructura del proyecto
+home-credit-risk
+├── 01_data_understanding
+├── 02_data_preparation
+├── 03_modeling
+├── 05_deployment
+├── artifacts
+├── data
+│   ├── raw
+│   └── processed
+├── src
+├── requirements.txt
+└── README.md
+
+7. Reproducibilidad
+Requisitos
+
+Python 3.11 o superior
+
+Instalación de dependencias
+
+Ejecutar en la raíz del proyecto:
 
 pip install -r requirements.txt
 
-### Ejecución
+Ejecución del pipeline
+
 Los scripts están diseñados para ejecutarse en el siguiente orden:
-1. Data understanding  
-2. Data preparation  
-3. Modeling y evaluación  
 
----
+Data Understanding
 
-## 7. Limitaciones y mejoras futuras
-- Ajuste del umbral de decisión según costos de negocio
-- Búsqueda de hiperparámetros (tuning)
-- Uso de modelos especializados como LightGBM o CatBoost
-- Análisis de importancia de variables (SHAP)
-- Calibración de probabilidades
+Data Preparation
 
----
+Modeling y Evaluación
 
-## 8. Autor
-Daniel Fernandez y Giovanni Ortiz
+Deployment (API)
 
+8. Limitaciones y mejoras futuras
+
+Ajuste del umbral de decisión según costos de negocio
+
+Optimización de hiperparámetros
+
+Uso de modelos especializados como LightGBM o CatBoost
+
+Análisis de importancia de variables (SHAP)
+
+Calibración de probabilidades
+
+9. Autores
+
+Daniel Fernández
+
+Giovanni Ortiz
