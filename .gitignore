@@ -2,8 +2,9 @@
 __pycache__/
 *.pyc
 
-# Virtual environment
+# Virtual environments
 .venv/
+venv/
 
 # OS
 .DS_Store
@@ -12,6 +13,10 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
-# Data outputs (opcional si el profe no pide subirlos)
-# data/raw/
-# data/interim/
+# Data
+data/raw/
+data/processed/
+
+# Artifacts / models
+artifacts/*.joblib
+artifacts/*.pkl
