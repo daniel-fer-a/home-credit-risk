@@ -47,14 +47,13 @@ def health():
 
 @app.post("/predict")
 def predict(req: PredictRequest):
-    # Convertir a DataFrame 1 fila
+    
     row = pd.DataFrame([req.features])
 
-    # Mantener SOLO las columnas numéricas que el modelo espera
-    # (las que no vengan -> NaN; las extra -> se ignoran)
+    
     row = row.reindex(columns=numeric_cols)
 
-    # Limpieza infinities
+    
     row = row.replace([np.inf, -np.inf], np.nan)
 
     proba = float(model.predict_proba(row)[:, 1][0])
