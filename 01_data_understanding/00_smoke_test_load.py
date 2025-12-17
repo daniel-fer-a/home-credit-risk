@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-# Agregar la raíz del proyecto al PYTHONPATH
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
 
