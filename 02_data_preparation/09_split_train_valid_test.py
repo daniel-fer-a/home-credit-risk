@@ -16,14 +16,14 @@ RANDOM_STATE = 42
 def main():
     processed_dir = PROJECT_ROOT / "data" / "processed"
 
-    # 1) Cargar datos finales
+    
     X = pd.read_parquet(processed_dir / "model_X.parquet")
     y = pd.read_parquet(processed_dir / "model_y.parquet")[TARGET_COL]
 
     print(f"Loaded model_X: {X.shape}")
     print(f"Loaded model_y: {y.shape}")
 
-    # 2) Primer split: train vs temp (valid+test)
+    
     X_train, X_temp, y_train, y_temp = train_test_split(
         X,
         y,
@@ -32,7 +32,7 @@ def main():
         random_state=RANDOM_STATE,
     )
 
-    # 3) Segundo split: valid vs test (50/50 del temp)
+    
     X_valid, X_test, y_valid, y_test = train_test_split(
         X_temp,
         y_temp,
@@ -41,7 +41,7 @@ def main():
         random_state=RANDOM_STATE,
     )
 
-    # 4) Mostrar distribuciones
+    
     def report_split(name, y_part):
         dist = y_part.value_counts(normalize=True)
         print(f"{name} size={len(y_part)} distribution:")
@@ -51,7 +51,7 @@ def main():
     report_split("VALID", y_valid)
     report_split("TEST", y_test)
 
-    # 5) Guardar splits
+    
     out_dir = processed_dir
     X_train.to_parquet(out_dir / "X_train.parquet")
     y_train.to_frame(TARGET_COL).to_parquet(out_dir / "y_train.parquet")
@@ -62,7 +62,7 @@ def main():
     X_test.to_parquet(out_dir / "X_test.parquet")
     y_test.to_frame(TARGET_COL).to_parquet(out_dir / "y_test.parquet")
 
-    # 6) Guardar metadata
+    
     meta = {
         "train_size": int(len(y_train)),
         "valid_size": int(len(y_valid)),
