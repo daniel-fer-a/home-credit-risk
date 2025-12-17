@@ -11,7 +11,7 @@ from src.config import KEYS
 
 
 def main():
-    # 1) Cargar previous_application
+    
     res = load_parquet("previous_application")
     df = res.df.copy()
 
@@ -19,7 +19,7 @@ def main():
 
     require_columns(df, [KEYS["SK_ID_CURR"], KEYS["SK_ID_PREV"]], df_name="previous_application")
 
-    # 2) Selección de columnas numéricas comunes
+    
     numeric_cols = [
         c for c in [
             "AMT_APPLICATION",
@@ -31,7 +31,7 @@ def main():
 
     print(f"Numeric columns used: {numeric_cols}")
 
-    # 3) Agregación por cliente
+    
     agg_dict = {c: ["mean", "max", "sum"] for c in numeric_cols}
     agg_dict[KEYS["SK_ID_PREV"]] = ["count"]
 
@@ -41,7 +41,7 @@ def main():
         .agg(agg_dict)
     )
 
-    # 4) Flatten columnas
+    
     prev_agg.columns = [
         f"prev_{col}_{stat}" if col != KEYS["SK_ID_PREV"] else "prev_app_count"
         for col, stat in prev_agg.columns
@@ -51,7 +51,7 @@ def main():
 
     print(f"Aggregated previous_application shape: {prev_agg.shape}")
 
-    # 5) Guardar
+    
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
