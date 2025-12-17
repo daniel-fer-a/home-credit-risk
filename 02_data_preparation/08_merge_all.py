@@ -21,7 +21,7 @@ def load_processed(path: Path, name: str) -> pd.DataFrame:
 def main():
     processed_dir = PROJECT_ROOT / "data" / "processed"
 
-    # 1) Cargar base
+    
     base_X = load_processed(processed_dir / "base_X.parquet", "base_X")
     base_y_path = processed_dir / "base_y.parquet"
     base_y = load_processed(base_y_path, "base_y") if base_y_path.exists() else None
@@ -30,7 +30,7 @@ def main():
 
     n_base = base_X.shape[0]
 
-    # 2) Cargar features agregadas (todas son 1 fila por SK_ID_CURR)
+    
     feat_files = [
         ("feat_bureau", processed_dir / "feat_bureau.parquet"),
         ("feat_bureau_balance", processed_dir / "feat_bureau_balance.parquet"),
@@ -45,24 +45,24 @@ def main():
         df = load_processed(path, name)
         require_columns(df, [KEYS["SK_ID_CURR"]], df_name=name)
 
-        # sanity: debe ser único por cliente
+        
         dups = int(df.duplicated(subset=[KEYS["SK_ID_CURR"]]).sum())
         if dups > 0:
             raise ValueError(f"[{name}] tiene {dups} SK_ID_CURR duplicados (debería ser 1 fila por cliente).")
 
         feats.append(df)
 
-    # 3) Merge secuencial (left join para no perder filas)
+    
     merged = base_X
     for df_feat in feats:
         merged = merged.merge(df_feat, on=KEYS["SK_ID_CURR"], how="left")
         print(f"After merge -> shape={merged.shape}")
 
-    # 4) Check filas (no debe cambiar)
+    
     if merged.shape[0] != n_base:
         raise ValueError(f"Row count changed after merges! base={n_base}, merged={merged.shape[0]}")
 
-    # 5) Guardar tabla final
+    
     out_dir = processed_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -75,7 +75,7 @@ def main():
         base_y.to_parquet(y_out)
         print(f"[OK] Model target saved to: {y_out}")
 
-    # 6) Guardar metadata merge
+    
     meta = {
         "rows": int(merged.shape[0]),
         "n_features": int(merged.shape[1]),
