@@ -11,16 +11,16 @@ from src.config import KEYS, TARGET_COL
 
 
 def main():
-    # 1) Cargar application
+    
     res = load_parquet("application")
     df = res.df.copy()
 
     print(f"Loaded application: shape={df.shape}")
 
-    # 2) Verificar llave principal
+    
     require_columns(df, [KEYS["SK_ID_CURR"]], df_name="application")
 
-    # 3) Separar target si existe
+    
     if TARGET_COL in df.columns:
         y = df[TARGET_COL].astype("int8")
         X = df.drop(columns=[TARGET_COL])
@@ -30,11 +30,11 @@ def main():
         X = df
         print("No TARGET column found (test set).")
 
-    # 4) Identificar columnas ID (no para modelar)
+    
     id_cols = [c for c in X.columns if c.startswith("SK_ID")]
     print(f"ID columns detected: {id_cols}")
 
-    # 5) Guardar base
+    
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -48,7 +48,7 @@ def main():
         y.to_frame("TARGET").to_parquet(y_path)
         print(f"[OK] Target saved to: {y_path}")
 
-    # 6) Guardar metadata simple
+    
     meta = {
         "rows": X.shape[0],
         "n_features": X.shape[1],
