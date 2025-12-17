@@ -5,10 +5,10 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import roc_auc_score, classification_report
 
-# ---- FIX IMPORT PATH ----
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
-# -------------------------
+
 
 from src.config import TARGET_COL
 
@@ -19,7 +19,7 @@ RANDOM_STATE = 42
 def main():
     data_dir = PROJECT_ROOT / "data" / "processed"
 
-    # Cargar splits
+    
     X_train = pd.read_parquet(data_dir / "X_train.parquet")
     y_train = pd.read_parquet(data_dir / "y_train.parquet")[TARGET_COL]
 
@@ -29,16 +29,16 @@ def main():
     X_test = pd.read_parquet(data_dir / "X_test.parquet")
     y_test = pd.read_parquet(data_dir / "y_test.parquet")[TARGET_COL]
 
-    # Usar solo numéricas
+    
     X_train = X_train.select_dtypes(include=["number"])
     X_valid = X_valid.select_dtypes(include=["number"])
     X_test = X_test.select_dtypes(include=["number"])
 
-    # Limpiar infinitos
+    
     for df in [X_train, X_valid, X_test]:
         df.replace([np.inf, -np.inf], np.nan, inplace=True)
 
-    # Entrenar con train + valid
+    
     X_full = pd.concat([X_train, X_valid])
     y_full = pd.concat([y_train, y_valid])
 
@@ -53,7 +53,7 @@ def main():
 
     model.fit(X_full, y_full)
 
-    # Evaluar en test
+    
     y_test_proba = model.predict_proba(X_test)[:, 1]
     y_test_pred = (y_test_proba >= 0.5).astype(int)
 
