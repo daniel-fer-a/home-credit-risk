@@ -11,7 +11,7 @@ from src.config import KEYS
 
 
 def main():
-    # 1) Cargar bureau_balance
+    
     res_bb = load_parquet("bureau_balance")
     bb = res_bb.df.copy()
 
@@ -19,10 +19,10 @@ def main():
 
     require_columns(bb, [KEYS["SK_ID_BUREAU"], "MONTHS_BALANCE"], df_name="bureau_balance")
 
-    # 2) Mapear STATUS a severidad numérica (si existe)
+    
     status_map = {
-        "C": 0,  # cerrado
-        "X": 0,  # sin info
+        "C": 0,  
+        "X": 0,  
         "0": 0,
         "1": 1,
         "2": 2,
@@ -36,7 +36,7 @@ def main():
     else:
         bb["status_severity"] = 0
 
-    # 3) Agregar por crédito (SK_ID_BUREAU)
+    
     bb_agg_credit = (
         bb
         .groupby(KEYS["SK_ID_BUREAU"])
@@ -52,7 +52,7 @@ def main():
 
     print(f"bureau_balance aggregated per credit: shape={bb_agg_credit.shape}")
 
-    # 4) Cargar bureau y unir
+    
     res_bureau = load_parquet("bureau")
     bureau = res_bureau.df[[KEYS["SK_ID_BUREAU"], KEYS["SK_ID_CURR"]]].copy()
 
@@ -62,7 +62,7 @@ def main():
 
     print(f"Merged bureau + bureau_balance: shape={merged.shape}")
 
-    # 5) Agregar por cliente
+    
     cust_agg = (
         merged
         .groupby(KEYS["SK_ID_CURR"])
@@ -78,7 +78,7 @@ def main():
 
     print(f"Final bureau_balance features per customer: shape={cust_agg.shape}")
 
-    # 6) Guardar
+    
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
