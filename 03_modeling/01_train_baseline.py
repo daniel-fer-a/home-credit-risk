@@ -24,7 +24,7 @@ def main():
     artifacts_dir = PROJECT_ROOT / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1) Cargar splits
+    
     X_train = pd.read_parquet(data_dir / "X_train.parquet")
     y_train = pd.read_parquet(data_dir / "y_train.parquet")[TARGET_COL]
 
@@ -36,19 +36,19 @@ def main():
 
     import numpy as np
 
-    # Reemplazar infinitos por NaN (causados por divisiones)
+    
     X_train = X_train.replace([np.inf, -np.inf], np.nan)
     X_valid = X_valid.replace([np.inf, -np.inf], np.nan)
 	
 
-    # 2) Detectar tipos de columnas
+    
     num_cols = X_train.select_dtypes(include=["number"]).columns.tolist()
     cat_cols = X_train.select_dtypes(exclude=["number"]).columns.tolist()
 
     print(f"Numeric features: {len(num_cols)}")
     print(f"Categorical features: {len(cat_cols)}")
 
-    # 3) Preprocesamiento
+    
     numeric_pipe = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median")),
@@ -70,7 +70,7 @@ def main():
         ]
     )
 
-    # 4) Modelo baseline
+    
     model = LogisticRegression(
         max_iter=1000,
         class_weight="balanced",
@@ -85,10 +85,10 @@ def main():
         ]
     )
 
-    # 5) Entrenar
+    
     pipe.fit(X_train, y_train)
 
-    # 6) Evaluación en valid
+    
     y_valid_proba = pipe.predict_proba(X_valid)[:, 1]
     y_valid_pred = pipe.predict(X_valid)
 
@@ -98,7 +98,7 @@ def main():
     print("\nClassification report (valid):")
     print(classification_report(y_valid, y_valid_pred, digits=4))
 
-    # 7) Guardar métricas
+    
     metrics = {
         "model": "logistic_regression_baseline",
         "roc_auc_valid": float(auc),
