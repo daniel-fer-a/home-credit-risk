@@ -11,7 +11,7 @@ from src.config import KEYS
 
 
 def main():
-    # 1) Cargar POS_CASH_balance
+    
     res_pos = load_parquet("pos_cash_balance")
     pos = res_pos.df.copy()
 
@@ -23,7 +23,7 @@ def main():
         df_name="POS_CASH_balance"
     )
 
-    # 2) Flags de atraso (si existe columna)
+    
     if "SK_DPD" in pos.columns:
         pos["is_late"] = (pos["SK_DPD"] > 0).astype("int8")
         pos["late_days"] = pos["SK_DPD"]
@@ -31,7 +31,7 @@ def main():
         pos["is_late"] = 0
         pos["late_days"] = 0
 
-    # 3) Agregación por solicitud previa
+    
     pos_prev_agg = (
         pos
         .groupby(KEYS["SK_ID_PREV"])
@@ -47,7 +47,7 @@ def main():
 
     print(f"POS aggregated per SK_ID_PREV: shape={pos_prev_agg.shape}")
 
-    # 4) Cargar previous_application para mapear a cliente
+    
     res_prev = load_parquet("previous_application")
     prev = res_prev.df[[KEYS["SK_ID_PREV"], KEYS["SK_ID_CURR"]]].copy()
 
@@ -57,7 +57,7 @@ def main():
 
     print(f"Merged previous_application + POS: shape={merged.shape}")
 
-    # 5) Agregar por cliente
+    
     cust_agg = (
         merged
         .groupby(KEYS["SK_ID_CURR"])
@@ -73,7 +73,7 @@ def main():
 
     print(f"Final POS features per customer: shape={cust_agg.shape}")
 
-    # 6) Guardar
+    
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
