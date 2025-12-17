@@ -11,7 +11,7 @@ from src.config import KEYS
 
 
 def main():
-    # 1) Cargar credit_card_balance
+    
     res_cc = load_parquet("credit_card_balance")
     cc = res_cc.df.copy()
 
@@ -23,7 +23,7 @@ def main():
         df_name="credit_card_balance"
     )
 
-    # 2) Utilización y atraso (si existen columnas)
+    
     if "AMT_BALANCE" in cc.columns and "AMT_CREDIT_LIMIT_ACTUAL" in cc.columns:
         cc["utilization"] = (
             cc["AMT_BALANCE"] / cc["AMT_CREDIT_LIMIT_ACTUAL"]
@@ -38,7 +38,7 @@ def main():
         cc["is_late"] = 0
         cc["late_days"] = 0
 
-    # 3) Agregar por solicitud previa
+    
     cc_prev_agg = (
         cc
         .groupby(KEYS["SK_ID_PREV"])
@@ -54,7 +54,7 @@ def main():
 
     print(f"Credit card aggregated per SK_ID_PREV: shape={cc_prev_agg.shape}")
 
-    # 4) Mapear a cliente
+    
     res_prev = load_parquet("previous_application")
     prev = res_prev.df[[KEYS["SK_ID_PREV"], KEYS["SK_ID_CURR"]]].copy()
 
@@ -64,7 +64,7 @@ def main():
 
     print(f"Merged previous_application + credit_card: shape={merged.shape}")
 
-    # 5) Agregar por cliente
+    
     cust_agg = (
         merged
         .groupby(KEYS["SK_ID_CURR"])
@@ -80,7 +80,7 @@ def main():
 
     print(f"Final credit card features per customer: shape={cust_agg.shape}")
 
-    # 6) Guardar
+    
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
