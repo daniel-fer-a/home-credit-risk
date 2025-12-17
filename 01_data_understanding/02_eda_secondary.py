@@ -54,11 +54,11 @@ def main():
         print(report_basic(df, df_name=name))
         print("-" * 80)
 
-        # columnas clave
+        
         present_keys = [k for k in keys if k in df.columns]
         print(f"Keys present: {present_keys}")
 
-        # perfiles por llave
+        
         for k in present_keys:
             prof = key_profile(df, k, name)
             profiles.append(prof)
@@ -67,7 +67,7 @@ def main():
                   f"avg_rows_per_key={prof['avg_rows_per_key']:.2f}" if prof["avg_rows_per_key"] else
                   f"Key profile [{name}] {k}: unique={prof['n_unique']}, missing={prof['missing']}")
 
-        # check duplicados cuando tiene sentido (ej: SK_ID_BUREAU en bureau debería ser casi único)
+        
         if name == "bureau" and KEYS["SK_ID_BUREAU"] in df.columns:
             dup = int(df.duplicated(subset=[KEYS["SK_ID_BUREAU"]]).sum())
             print(f"Duplicated SK_ID_BUREAU rows in bureau: {dup}")
@@ -76,7 +76,7 @@ def main():
             dup = int(df.duplicated(subset=[KEYS["SK_ID_PREV"]]).sum())
             print(f"Duplicated SK_ID_PREV rows in previous_application: {dup}")
 
-    # Guardar perfil a json
+    
     out_dir = PROJECT_ROOT / "data" / "interim"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "eda_secondary_key_profiles.json"
