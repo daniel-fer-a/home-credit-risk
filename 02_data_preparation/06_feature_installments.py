@@ -11,7 +11,7 @@ from src.config import KEYS
 
 
 def main():
-    # 1) Cargar installments_payments
+    
     res_inst = load_parquet("installments_payments")
     inst = res_inst.df.copy()
 
@@ -23,7 +23,7 @@ def main():
         df_name="installments_payments"
     )
 
-    # 2) Features a nivel cuota
+    
     inst["days_delay"] = inst["DAYS_ENTRY_PAYMENT"] - inst["DAYS_INSTALMENT"]
     inst["is_late"] = (inst["days_delay"] > 0).astype("int8")
     inst["is_early"] = (inst["days_delay"] < 0).astype("int8")
@@ -33,7 +33,7 @@ def main():
     else:
         inst["payment_diff"] = 0.0
 
-    # 3) Agregación por solicitud previa
+    
     inst_prev_agg = (
         inst
         .groupby(KEYS["SK_ID_PREV"])
@@ -49,7 +49,7 @@ def main():
 
     print(f"Installments aggregated per SK_ID_PREV: shape={inst_prev_agg.shape}")
 
-    # 4) Mapear a cliente vía previous_application
+    
     res_prev = load_parquet("previous_application")
     prev = res_prev.df[[KEYS["SK_ID_PREV"], KEYS["SK_ID_CURR"]]].copy()
 
@@ -59,7 +59,7 @@ def main():
 
     print(f"Merged previous_application + installments: shape={merged.shape}")
 
-    # 5) Agregar por cliente
+    
     cust_agg = (
         merged
         .groupby(KEYS["SK_ID_CURR"])
@@ -75,7 +75,7 @@ def main():
 
     print(f"Final installments features per customer: shape={cust_agg.shape}")
 
-    # 6) Guardar
+   
     out_dir = PROJECT_ROOT / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 
