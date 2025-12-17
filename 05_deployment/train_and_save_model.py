@@ -24,11 +24,11 @@ def main():
     X_valid = pd.read_parquet(data_dir / "X_valid.parquet")
     y_valid = pd.read_parquet(data_dir / "y_valid.parquet")[TARGET_COL]
 
-    # Solo numéricas
+    
     X_train = X_train.select_dtypes(include=["number"])
     X_valid = X_valid.select_dtypes(include=["number"])
 
-    # Limpiar infinitos
+    
     for df in (X_train, X_valid):
         df.replace([np.inf, -np.inf], np.nan, inplace=True)
 
@@ -46,7 +46,7 @@ def main():
 
     model.fit(X_full, y_full)
 
-    # Guardar modelo + lista de columnas numéricas usadas
+    
     model_path = out_dir / "champion_model.joblib"
     cols_path = out_dir / "champion_numeric_cols.joblib"
 
