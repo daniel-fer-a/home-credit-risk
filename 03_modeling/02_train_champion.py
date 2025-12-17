@@ -21,38 +21,38 @@ def main():
     artifacts_dir = PROJECT_ROOT / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1) Cargar splits
+    
     X_train = pd.read_parquet(data_dir / "X_train.parquet")
     y_train = pd.read_parquet(data_dir / "y_train.parquet")[TARGET_COL]
 
     X_valid = pd.read_parquet(data_dir / "X_valid.parquet")
     y_valid = pd.read_parquet(data_dir / "y_valid.parquet")[TARGET_COL]
 
-    # 👉 USAR SOLO FEATURES NUMÉRICAS
+    
     X_train = X_train.select_dtypes(include=["number"])
     X_valid = X_valid.select_dtypes(include=["number"])
 
     print(f"Train shape (numeric only): {X_train.shape}")
     print(f"Valid shape (numeric only): {X_valid.shape}")
 
-    # 2) Limpiar infinitos (por seguridad)
+    
     X_train = X_train.replace([np.inf, -np.inf], np.nan)
     X_valid = X_valid.replace([np.inf, -np.inf], np.nan)
 
-    # 3) Modelo campeón
+    
     model = HistGradientBoostingClassifier(
         max_depth=6,
         learning_rate=0.05,
         max_iter=300,
         max_leaf_nodes=31,
         random_state=RANDOM_STATE,
-        class_weight={0: 1.0, 1: 5.0},  # penalizar clase minoritaria
+        class_weight={0: 1.0, 1: 5.0},  
     )
 
-    # 4) Entrenar
+    
     model.fit(X_train, y_train)
 
-    # 5) Evaluar en valid
+    
     y_valid_proba = model.predict_proba(X_valid)[:, 1]
     y_valid_pred = (y_valid_proba >= 0.5).astype(int)
 
@@ -62,7 +62,7 @@ def main():
     print("\nClassification report (valid):")
     print(classification_report(y_valid, y_valid_pred, digits=4))
 
-    # 6) Guardar métricas
+    
     metrics = {
         "model": "hist_gradient_boosting_numeric_only",
         "roc_auc_valid": float(auc),
